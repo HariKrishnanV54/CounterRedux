@@ -1,22 +1,23 @@
-import React from 'react'
+import React, { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { increment, decrement, reset, incrementByAmount } from '../redux/slices/CounterSlice';
-import { useRef } from 'react';
 
 function Counter() {
-
-  const {count} = useSelector(state => state.counterReducer);
-  const dispatch = useDispatch(); 
+  const { count } = useSelector((state) => state.counterReducer);
+  const dispatch = useDispatch();
   const inputRef = useRef();
+
   const handleIncrement = () => {
-    const amount = inputRef.current
-    if(amount) {
-    dispatch(incrementByAmount(amount))
+    const value = inputRef.current?.value.trim();
+    const amount = Number(value);
+
+    if (value && !Number.isNaN(amount)) {
+      dispatch(incrementByAmount(amount));
+      inputRef.current.value = '';
+    } else {
+      alert('Please enter a valid number to increment by amount');
     }
-    else{
-      alert('Please enter a valid number to increment by amount')
-    }
-  }
+  };
 
   return (
     <div className="bg-black vh-100 d-flex justify-content-center align-items-center">
@@ -27,25 +28,31 @@ function Counter() {
         <h1 className="text-white display-1 fw-bold mt-2">{count}</h1>
 
         <div className="d-flex justify-content-center gap-3">
-          <button onClick={() => dispatch(decrement())} className="btn btn-warning ">Decrement</button>
-          <button onClick={() => dispatch(reset())} className="btn btn-danger ">Reset</button>
-          <button onClick={() => dispatch(increment())} className="btn btn-success ">Increment</button>
+          <button onClick={() => dispatch(decrement())} className="btn btn-warning">
+            Decrement
+          </button>
+          <button onClick={() => dispatch(reset())} className="btn btn-danger">
+            Reset
+          </button>
+          <button onClick={() => dispatch(increment())} className="btn btn-success">
+            Increment
+          </button>
         </div>
 
         <div className="d-flex w-100 gap-2 mb-2">
           <input
-          key={inputRef}
-            type="text"
+            ref={inputRef}
+            type="number"
             className="form-control"
             placeholder="Enter the amount to be Incremented!!!"
           />
-          <button onClick={handleIncrement} className="btn btn-primary ">
+          <button onClick={handleIncrement} className="btn btn-primary">
             Increment by Amount
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Counter
+export default Counter;
